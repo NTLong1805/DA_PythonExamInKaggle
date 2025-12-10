@@ -104,7 +104,7 @@ Công nghệ sử dụng
 
   4. Dashboarding: Thiết kế báo cáo trên Power BI phục vụ giảng viên
 
-**Thực hiện thuật toán KMeans phân cụm dữ liệu**
+💡**Thực hiện thuật toán KMeans phân cụm dữ liệu**
  - Bước 1. Data Segmentation & Benchmarking (Phân tách & Tạo chuẩn)
       + Tách dữ liệu thành 2 nhóm riêng biệt. Nhóm 1 bao gồm các sinh viên đã đạt(Passed Group) và nhóm 2 bao gồm các sinh viên chưa đạt(Failed Group)
       + Thiết lập chuẩn: Tính toán các chỉ số trung vị của nhóm Passed Group để làm 'Kim chỉ nam' cho nhóm còn lại. Nhóm 2 sẽ được so sánh với chuẩn này để có thể cải thiện khả năng.
@@ -123,5 +123,43 @@ Công nghệ sử dụng
       + Cluster 1(Nhóm thực chiến - Khả năng cao sẽ đỗ): Nhóm này dành nhiều thời gian học, làm nhiều dự án nhất. Đây là nhóm học hiệu quả nhất khi chỉ cần dành ít thời gian học thụ động(Xem video Tutorial) nhưng lại thực hành nhiều, chỉ số debug thấp cho thấy rằng logic code tốt ít khi phải debug => Khuyến khích thực hiện thêm các Project.
       + Cluster 2(Nhóm bế tắc - cần phải hỗ trợ): Nhóm này dành nhiều thời gian học nhất, xem Tutorial nhiều nhất, làm bài tập nhiều nhất. Tuy nhiên số lượng Project ít cho thấy rằng nhóm này mới chỉ dừng lại ở lý thuyết mà chưa thực sự tiến tới việc thực hành làm những dự án. Số lần debug cũng nhiều => Điển hình của bẫy hướng dẫn. Họ dành nhiều thời gian cho việc xem Video và sửa lỗi vụn vặt mà không có thời gian để mà tổng hợp kiến thức hoặc thực hành dự án. Cần phải hướng dẫn, đưa ra phương pháp học hiệu quả. Tổng hợp kiến thức cho nhóm này và khuyến khích, hướng dẫn thực hiện Project.
 
+💡 **Xây dựng mô hình dự báo và rủi ro bằng thuật toán Logistic Regression**
+  - Bước 1. Chuẩn bị dữ liệu
+      + Tương tự với thuật toán KMeans, cần phải chuẩn hóa dữ liệu bằng phương pháp Z-Score trước khi đưa vào mô hình.
+      + Đối với một số cột có dạng Text(Country,prior_programming_experience) cần phải One-Hot Encoding để giữ lại toàn bộ ngữ cảnh của dữ liệu.
+  - Bước 2. Phân tích kết quả của mô hình
+      + Áp dụng Logistic Regression, ta nhận được Logistic Regression Accuracy: 91.33%(Cứ 100 sinh viên thì đoán chính xác 91 người). Mô hình này hoàn toàn có thể áp dụng cho bộ dữ liệu này.
+  - Bước 3. Phân tích những yếu tố ảnh hưởng
+                         Feature               Coefficient
+             hours_spent_learning_per_week     1.669932
+                          projects_completed     1.372536
+             self_reported_confidence_python     1.022274
+                                 uses_kaggle     0.475370
+                 debugging_sessions_per_week     0.457181
+                    practice_problems_solved     0.448979
+           participates_in_discussion_forums     0.203724
+                             country_Brazil     0.199423
+                           country_Pakistan     0.143672
+                     tutorial_videos_watched     0.138292
+                                 country_UK     0.119108
+                              country_India     0.109469
+                            country_Germany     0.097546
+                                         age     0.078999
+                             weeks_in_course     0.063117
+                                country_USA     0.009828
+                            country_Nigeria    -0.017627
+                          country_Indonesia    -0.024163
+                              country_Other    -0.093889
+  prior_programming_experience_Intermediate    -0.740901
+      prior_programming_experience_Beginner    -1.878632
+       prior_programming_experience_unknown    -3.431808
+    
+     + Từ những yếu tố ảnh hưởng trên, Thời gian học(hours_spent_learning_per_week) và (projects_completed) là 2 yếu tố ảnh hưởng mạnh mẽ nhất đến sự thành công của sinh viên trong khóa học => Học phải đi đôi với hành, không chỉ cần học lý thuyết mà cần phải thực hành những dự án thì mới có thể thành công được.
+     + Thực hành dự án hiệu quả hơn gấp 10 lần việc chỉ xem tutorial video.
+     + Các yếu tố như quốc gia hay độ tuổi không gây ảnh hưởng lớn đến việc học.
+     + Trình độ Beginner đang ở mốc -1.87 cho thấy rằng nhóm người này cần được hỗ trợ, quan tâm nhiều hơn.
+   
+ - Bước 4. Phân tầng rủi ro(Risk Segmentation): Phân chia thành 3 nhóm chính(High Risk < 50%, 50%< Medium Risk < 80%, Safe > 80%)
+  
 
 
