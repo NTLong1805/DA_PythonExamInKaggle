@@ -103,3 +103,25 @@ Công nghệ sử dụng
       - Mining: FP-Growth để tìm luật kết hợp.
 
   4. Dashboarding: Thiết kế báo cáo trên Power BI phục vụ giảng viên
+
+**Thực hiện thuật toán KMeans phân cụm dữ liệu**
+ - Bước 1. Data Segmentation & Benchmarking (Phân tách & Tạo chuẩn)
+      + Tách dữ liệu thành 2 nhóm riêng biệt. Nhóm 1 bao gồm các sinh viên đã đạt(Passed Group) và nhóm 2 bao gồm các sinh viên chưa đạt(Failed Group)
+      + Thiết lập chuẩn: Tính toán các chỉ số trung vị của nhóm Passed Group để làm 'Kim chỉ nam' cho nhóm còn lại. Nhóm 2 sẽ được so sánh với chuẩn này để có thể cải thiện khả năng.
+ - Bước 2. Data Transforming
+      + Log Transform: Vì bộ dữ liệu đưa vào có số lượng bài tập sẽ là số có thể là đơn vị hàng trăm và số lượng dự án đã làm có số lượng nhỏ như vậy dữ liệu sẽ bị lệch phải(right skewed) và làm giảm thiểu tác động của các giá trị outlier.
+      + StandardScaler: Đưa bộ dữ liệu về chung 1 thang đo(Z-Score Standardlization) để đảm bảo các giá trị lớn không ảnh hưởng nhiều hơn những giá trị nhỏ như đã đề cập bên trên.
+ - Bước 3.  Tìm số cụm tối ưu bằng thuật toán Elbow
+      + Sử dụng thuật toán Elbow để xác định điểm gập(nơi mà độ giảm diện tích của từng cụm là nhỏ nhất) => Kết quả đạt được Optimize_K = 6 => Tiếp tục thực hiện KMeans
+ - Bước 4. Thực hiện thuật toán KMeans với Optimize_K đã tìm được bên trên
+      + Chạy thuật toán K_Means với K = 6 và khởi tạo tâm cụm là ngẫu nhiên. Tuy nhiên sau khi đánh giá kết quả thì k = 6 đưa ra những nhóm có các đặc điểm gần như là tương đương nhau và rất khó có thể phân biệt từng nhóm. Đánh giá K = 6 là chưa hiệu quả với bộ dữ liệu này. Sau khi thử nghiệm k = 3, Kết quả có vẻ đã rõ ràng hơn.
+        <img width="641" height="226" alt="image" src="https://github.com/user-attachments/assets/75c622bd-46f7-434e-84ca-7cfdc240a0a8" />
+ - Bước 5. Đánh giá kết quả
+      + Cluster 0(Nhóm bất thường - Cần phải kiểm tra và đánh giá): Thời gian học ít, số lượng bài tập làm là lớn và số lượng Project đang ở mức khá.Số liệu này là phi logic đối với những người học bình thường có thể đặt ra giả thuyết với nhóm này như sau:
+          *  Nhóm Chuyên Gia: là những người từng có prior_programming_experience, học chỉ để lấy chứng chỉ. Đối với những prior_programming_experience = 'Advanced' thì không cần kiểm tra
+          *  Nhóm Cheater: Những người không thực sự học mà chỉ copy code để có thể hoàn thiện bài tập để có thể qua môn. Đối với những prior_programming_experience còn lại thì cần một bài kiểm tra để đánh giá thực lực của nhóm này.
+      + Cluster 1(Nhóm thực chiến - Khả năng cao sẽ đỗ): Nhóm này dành nhiều thời gian học, làm nhiều dự án nhất. Đây là nhóm học hiệu quả nhất khi chỉ cần dành ít thời gian học thụ động(Xem video Tutorial) nhưng lại thực hành nhiều, chỉ số debug thấp cho thấy rằng logic code tốt ít khi phải debug => Khuyến khích thực hiện thêm các Project.
+      + Cluster 2(Nhóm bế tắc - cần phải hỗ trợ): Nhóm này dành nhiều thời gian học nhất, xem Tutorial nhiều nhất, làm bài tập nhiều nhất. Tuy nhiên số lượng Project ít cho thấy rằng nhóm này mới chỉ dừng lại ở lý thuyết mà chưa thực sự tiến tới việc thực hành làm những dự án. Số lần debug cũng nhiều => Điển hình của bẫy hướng dẫn. Họ dành nhiều thời gian cho việc xem Video và sửa lỗi vụn vặt mà không có thời gian để mà tổng hợp kiến thức hoặc thực hành dự án. Cần phải hướng dẫn, đưa ra phương pháp học hiệu quả. Tổng hợp kiến thức cho nhóm này và khuyến khích, hướng dẫn thực hiện Project.
+
+
+
