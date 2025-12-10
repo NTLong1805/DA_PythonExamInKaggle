@@ -130,30 +130,6 @@ Công nghệ sử dụng
   - Bước 2. Phân tích kết quả của mô hình
       + Áp dụng Logistic Regression, ta nhận được Logistic Regression Accuracy: 91.33%(Cứ 100 sinh viên thì đoán chính xác 91 người). Mô hình này hoàn toàn có thể áp dụng cho bộ dữ liệu này.
   - Bước 3. Phân tích những yếu tố ảnh hưởng
-                         Feature               Coefficient
-             hours_spent_learning_per_week     1.669932
-                          projects_completed     1.372536
-             self_reported_confidence_python     1.022274
-                                 uses_kaggle     0.475370
-                 debugging_sessions_per_week     0.457181
-                    practice_problems_solved     0.448979
-           participates_in_discussion_forums     0.203724
-                             country_Brazil     0.199423
-                           country_Pakistan     0.143672
-                     tutorial_videos_watched     0.138292
-                                 country_UK     0.119108
-                              country_India     0.109469
-                            country_Germany     0.097546
-                                         age     0.078999
-                             weeks_in_course     0.063117
-                                country_USA     0.009828
-                            country_Nigeria    -0.017627
-                          country_Indonesia    -0.024163
-                              country_Other    -0.093889
-  prior_programming_experience_Intermediate    -0.740901
-      prior_programming_experience_Beginner    -1.878632
-       prior_programming_experience_unknown    -3.431808
-    
      + Từ những yếu tố ảnh hưởng trên, Thời gian học(hours_spent_learning_per_week) và (projects_completed) là 2 yếu tố ảnh hưởng mạnh mẽ nhất đến sự thành công của sinh viên trong khóa học => Học phải đi đôi với hành, không chỉ cần học lý thuyết mà cần phải thực hành những dự án thì mới có thể thành công được.
      + Thực hành dự án hiệu quả hơn gấp 10 lần việc chỉ xem tutorial video.
      + Các yếu tố như quốc gia hay độ tuổi không gây ảnh hưởng lớn đến việc học.
