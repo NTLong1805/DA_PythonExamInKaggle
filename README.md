@@ -105,37 +105,82 @@ Công nghệ sử dụng
   4. Dashboarding: Thiết kế báo cáo trên Power BI phục vụ giảng viên
 
 💡**Thực hiện thuật toán KMeans phân cụm dữ liệu**
- - Bước 1. Data Segmentation & Benchmarking (Phân tách & Tạo chuẩn)
-      + Tách dữ liệu thành 2 nhóm riêng biệt. Nhóm 1 bao gồm các sinh viên đã đạt(Passed Group) và nhóm 2 bao gồm các sinh viên chưa đạt(Failed Group)
-      + Thiết lập chuẩn: Tính toán các chỉ số trung vị của nhóm Passed Group để làm 'Kim chỉ nam' cho nhóm còn lại. Nhóm 2 sẽ được so sánh với chuẩn này để có thể cải thiện khả năng.
- - Bước 2. Data Transforming
-      + Log Transform: Vì bộ dữ liệu đưa vào có số lượng bài tập sẽ là số có thể là đơn vị hàng trăm và số lượng dự án đã làm có số lượng nhỏ như vậy dữ liệu sẽ bị lệch phải(right skewed) và làm giảm thiểu tác động của các giá trị outlier.
-      + StandardScaler: Đưa bộ dữ liệu về chung 1 thang đo(Z-Score Standardlization) để đảm bảo các giá trị lớn không ảnh hưởng nhiều hơn những giá trị nhỏ như đã đề cập bên trên.
- - Bước 3.  Tìm số cụm tối ưu bằng thuật toán Elbow
-      + Sử dụng thuật toán Elbow để xác định điểm gập(nơi mà độ giảm diện tích của từng cụm là nhỏ nhất) => Kết quả đạt được Optimize_K = 6 => Tiếp tục thực hiện KMeans
- - Bước 4. Thực hiện thuật toán KMeans với Optimize_K đã tìm được bên trên
-      + Chạy thuật toán K_Means với K = 6 và khởi tạo tâm cụm là ngẫu nhiên. Tuy nhiên sau khi đánh giá kết quả thì k = 6 đưa ra những nhóm có các đặc điểm gần như là tương đương nhau và rất khó có thể phân biệt từng nhóm. Đánh giá K = 6 là chưa hiệu quả với bộ dữ liệu này. Sau khi thử nghiệm k = 3, Kết quả có vẻ đã rõ ràng hơn.
-        <img width="641" height="226" alt="image" src="https://github.com/user-attachments/assets/75c622bd-46f7-434e-84ca-7cfdc240a0a8" />
- - Bước 5. Đánh giá kết quả
-      + Cluster 0(Nhóm bất thường - Cần phải kiểm tra và đánh giá): Thời gian học ít, số lượng bài tập làm là lớn và số lượng Project đang ở mức khá.Số liệu này là phi logic đối với những người học bình thường có thể đặt ra giả thuyết với nhóm này như sau:
-          *  Nhóm Chuyên Gia: là những người từng có prior_programming_experience, học chỉ để lấy chứng chỉ. Đối với những prior_programming_experience = 'Advanced' thì không cần kiểm tra
-          *  Nhóm Cheater: Những người không thực sự học mà chỉ copy code để có thể hoàn thiện bài tập để có thể qua môn. Đối với những prior_programming_experience còn lại thì cần một bài kiểm tra để đánh giá thực lực của nhóm này.
-      + Cluster 1(Nhóm thực chiến - Khả năng cao sẽ đỗ): Nhóm này dành nhiều thời gian học, làm nhiều dự án nhất. Đây là nhóm học hiệu quả nhất khi chỉ cần dành ít thời gian học thụ động(Xem video Tutorial) nhưng lại thực hành nhiều, chỉ số debug thấp cho thấy rằng logic code tốt ít khi phải debug => Khuyến khích thực hiện thêm các Project.
-      + Cluster 2(Nhóm bế tắc - cần phải hỗ trợ): Nhóm này dành nhiều thời gian học nhất, xem Tutorial nhiều nhất, làm bài tập nhiều nhất. Tuy nhiên số lượng Project ít cho thấy rằng nhóm này mới chỉ dừng lại ở lý thuyết mà chưa thực sự tiến tới việc thực hành làm những dự án. Số lần debug cũng nhiều => Điển hình của bẫy hướng dẫn. Họ dành nhiều thời gian cho việc xem Video và sửa lỗi vụn vặt mà không có thời gian để mà tổng hợp kiến thức hoặc thực hành dự án. Cần phải hướng dẫn, đưa ra phương pháp học hiệu quả. Tổng hợp kiến thức cho nhóm này và khuyến khích, hướng dẫn thực hiện Project.
+ - Mục tiêu:
+      + Định danh chân dung người học(Student Segmentation): Thay vì nhìn sinh viên như những cá thể riêng lẻ, gom nhóm các sinh viên dựa theo đặc điểm chung trong việc học tập để hiểu thêm những phong cách học hiện tại.
+      + Thiết lập chuẩn: Sử dụng hành vi của nhóm đã đỗ làm 'thước đo'.Từ đó đặt mục tiêu phù hợp cho những sinh viên chưa đạt.
+ - Vấn đề giải quyết:
+      + Trong học tập, việc một lộ trình học cho tất cả học sinh trong một lớp, giữa nhiều cá thể khác nhau không thể phù hợp cho tất cả. Gây nên sự kém hiệu quả trong việc học tập của 1 số sinh viên.
+      + Sử dụng thuật toán học máy không giám sát (Unsupervised Learning) K-Means Clustering để tự động phân tách sinh viên thành các nhóm đặc thù. Điều này giúp nhà trường/hệ thống đưa ra các can thiệp cá nhân hóa (Personalized Intervention) chính xác cho từng nhóm.
+ - Các bước thực hiện:
+    - Bước 1. Data Segmentation & Benchmarking (Phân tách & Tạo chuẩn)
+         + Tách dữ liệu thành 2 nhóm riêng biệt. Nhóm 1 bao gồm các sinh viên đã đạt(Passed Group) và nhóm 2 bao gồm các sinh viên chưa đạt(Failed Group)
+         + Thiết lập chuẩn: Tính toán các chỉ số trung vị của nhóm Passed Group để làm 'Kim chỉ nam' cho nhóm còn lại. Nhóm 2 sẽ được so sánh với chuẩn này để có thể cải thiện khả năng.
+    - Bước 2. Data Transforming
+         + Log Transform: Vì bộ dữ liệu đưa vào có số lượng bài tập sẽ là số có thể là đơn vị hàng trăm và số lượng dự án đã làm có số lượng nhỏ như vậy dữ liệu sẽ bị lệch phải(right skewed) và làm giảm thiểu tác động của các giá trị outlier.
+         + StandardScaler: Đưa bộ dữ liệu về chung 1 thang đo(Z-Score Standardlization) để đảm bảo các giá trị lớn không ảnh hưởng nhiều hơn những giá trị nhỏ như đã đề cập bên trên.
+    - Bước 3.  Tìm số cụm tối ưu bằng thuật toán Elbow
+         + Sử dụng thuật toán Elbow để xác định điểm gập(nơi mà độ giảm diện tích của từng cụm là nhỏ nhất) => Kết quả đạt được Optimize_K = 6 => Tiếp tục thực hiện KMeans
+    - Bước 4. Thực hiện thuật toán KMeans với Optimize_K đã tìm được bên trên
+         + Chạy thuật toán K_Means với K = 6 và khởi tạo tâm cụm là ngẫu nhiên. Tuy nhiên sau khi đánh giá kết quả thì k = 6 đưa ra những nhóm có các đặc điểm gần như là tương đương nhau và rất khó có thể phân biệt từng nhóm. Đánh giá K = 6 là chưa hiệu quả với bộ dữ liệu này. Sau khi thử nghiệm k = 3, Kết quả có vẻ đã rõ ràng hơn.
+           <img width="641" height="226" alt="image" src="https://github.com/user-attachments/assets/75c622bd-46f7-434e-84ca-7cfdc240a0a8" />
+    - Bước 5. Đánh giá kết quả
+         + Cluster 0(Nhóm bất thường - Cần phải kiểm tra và đánh giá): Thời gian học ít, số lượng bài tập làm là lớn và số lượng Project đang ở mức khá.Số liệu này là phi logic đối với những người học bình thường có thể đặt ra giả thuyết với nhóm này như sau:
+             *  Nhóm Chuyên Gia: là những người từng có prior_programming_experience, học chỉ để lấy chứng chỉ. Đối với những prior_programming_experience = 'Advanced' thì không cần kiểm tra
+             *  Nhóm Cheater: Những người không thực sự học mà chỉ copy code để có thể hoàn thiện bài tập để có thể qua môn. Đối với những prior_programming_experience còn lại thì cần một bài kiểm tra để đánh giá thực lực của nhóm này.
+         + Cluster 1(Nhóm thực chiến - Khả năng cao sẽ đỗ): Nhóm này dành nhiều thời gian học, làm nhiều dự án nhất. Đây là nhóm học hiệu quả nhất khi chỉ cần dành ít thời gian học thụ động(Xem video Tutorial) nhưng lại thực hành nhiều, chỉ số debug thấp cho thấy rằng logic code tốt ít khi phải debug => Khuyến khích thực hiện thêm các Project.
+         + Cluster 2(Nhóm bế tắc - cần phải hỗ trợ): Nhóm này dành nhiều thời gian học nhất, xem Tutorial nhiều nhất, làm bài tập nhiều nhất. Tuy nhiên số lượng Project ít cho thấy rằng nhóm này mới chỉ dừng lại ở lý thuyết mà chưa thực sự tiến tới việc thực hành làm những dự án. Số lần debug cũng nhiều => Điển hình của bẫy hướng dẫn. Họ dành nhiều thời gian cho việc xem Video và sửa lỗi vụn vặt mà không có thời gian để mà tổng hợp kiến thức hoặc thực hành dự án. Cần phải hướng dẫn, đưa ra phương pháp học hiệu quả. Tổng hợp kiến thức cho nhóm này và khuyến khích, hướng dẫn thực hiện Project.
 
 💡 **Xây dựng mô hình dự báo và rủi ro bằng thuật toán Logistic Regression**
-  - Bước 1. Chuẩn bị dữ liệu
-      + Tương tự với thuật toán KMeans, cần phải chuẩn hóa dữ liệu bằng phương pháp Z-Score trước khi đưa vào mô hình.
-      + Đối với một số cột có dạng Text(Country,prior_programming_experience) cần phải One-Hot Encoding để giữ lại toàn bộ ngữ cảnh của dữ liệu.
-  - Bước 2. Phân tích kết quả của mô hình
-      + Áp dụng Logistic Regression, ta nhận được Logistic Regression Accuracy: 91.33%(Cứ 100 sinh viên thì đoán chính xác 91 người). Mô hình này hoàn toàn có thể áp dụng cho bộ dữ liệu này.
-  - Bước 3. Phân tích những yếu tố ảnh hưởng
-     + Từ những yếu tố ảnh hưởng trên, Thời gian học(hours_spent_learning_per_week) và (projects_completed) là 2 yếu tố ảnh hưởng mạnh mẽ nhất đến sự thành công của sinh viên trong khóa học => Học phải đi đôi với hành, không chỉ cần học lý thuyết mà cần phải thực hành những dự án thì mới có thể thành công được.
-     + Thực hành dự án hiệu quả hơn gấp 10 lần việc chỉ xem tutorial video.
-     + Các yếu tố như quốc gia hay độ tuổi không gây ảnh hưởng lớn đến việc học.
-     + Trình độ Beginner đang ở mốc -1.87 cho thấy rằng nhóm người này cần được hỗ trợ, quan tâm nhiều hơn.
-   
- - Bước 4. Phân tầng rủi ro(Risk Segmentation): Phân chia thành 3 nhóm chính(High Risk < 50%, 50%< Medium Risk < 80%, Safe > 80%)
-  
-
+  - Mục tiêu:
+      + Chuyển từ phân tích mô tả (đã xảy ra) sang phân tích dự báo (Predictive Analytics). Mục tiêu là xây dựng một "Hệ thống cảnh báo sớm", giúp xác định xác suất đỗ/trượt của từng sinh viên ngay từ giai đoạn giữa khóa học để can thiệp kịp thời.
+  - Giải quyết vấn đề:
+      + Giảng viên không thể theo dõi sát sao hàng nghìn sinh viên. Việc đợi đến khi có điểm thi mới biết ai trượt là quá muộn. Sử dụng Logistic Regression để dự đoán xem sinh viên có thể vượt qua bài kiểm tra hay không?
+  - Các bước thực hiện:
+    - Bước 1. Chuẩn bị dữ liệu
+        + Tương tự với thuật toán KMeans, cần phải chuẩn hóa dữ liệu bằng phương pháp Z-Score để đưa các dữ liệu về cùng 1 thang đo để tránh việc model ưu tiên những dữ liệu lớn.
+        + Đối với một số cột có dạng Text(Country,prior_programming_experience) cần phải One-Hot Encoding để giữ lại toàn bộ ngữ cảnh của dữ liệu.
+    - Bước 2. Phân tích kết quả của mô hình
+        + Áp dụng Logistic Regression, ta nhận được Logistic Regression Accuracy: 91.33%(Cứ 100 sinh viên thì đoán chính xác 91 người). Mô hình này hoàn toàn có thể áp dụng cho bộ dữ liệu này.
+    - Bước 3. Phân tích những yếu tố ảnh hưởng
+       + Từ những yếu tố ảnh hưởng trên, Thời gian học(hours_spent_learning_per_week) và (projects_completed) là 2 yếu tố ảnh hưởng mạnh mẽ nhất đến sự thành công của sinh viên trong khóa học => Học phải đi đôi với hành, không chỉ cần học lý thuyết mà cần phải thực hành những dự án thì mới có thể thành công được.
+       + Thực hành dự án hiệu quả hơn gấp 10 lần việc chỉ xem tutorial video.
+       + Các yếu tố như quốc gia hay độ tuổi không gây ảnh hưởng lớn đến việc học.
+       + Trình độ Beginner đang ở mốc -1.87 cho thấy rằng nhóm người này cần được hỗ trợ, quan tâm nhiều hơn.
+    - Bước 4. Phân tầng rủi ro(Risk Segmentation): Phân chia thành 3 nhóm chính(High Risk < 50%, 50%< Medium Risk < 80%, Safe > 80%)
+  - Khuyến nghị:
+       + Chương trình "Onboarding" cho Beginner (Giải quyết hệ số -1.87): Vì nhóm Beginner chịu bất lợi lớn (-1.87), hệ thống không thể để họ học chung lộ trình với nhóm Advanced ngay từ đầu.
+         Đề xuất: Cần một khóa "Pre-course" hoặc 2 tuần đầu tiên tập trung lấp lỗ hổng kiến thức nền tảng để đưa hệ số này về gần 0 trước khi vào bài khó.
+💡**Thực hiện thuật toán FP-Growth để tìm ra phương pháp học tập hiệu quả**
+   - Mục tiêu: Thay vì phân tích lý do sinh viên thất bại, dự án tập trung đào sâu vào nhóm sinh viên đã vượt qua khóa học (Passed) để trả lời câu hỏi cốt lõi: **"Đâu là công thức hành vi chung của những người chiến thắng?"**
+   - Vấn đề giải quyết: Dữ liệu thô chỉ cho biết ai đậu, ai rớt, nhưng không giải thích được mối quan hệ nhân quả giữa các thói quen học tập. Phân tích thống kê thông thường dễ bỏ qua các tương tác phức tạp (ví dụ: Xem video nhiều nhưng không làm bài tập thì sao?).Dự án sử dụng **Association Rule Mining (Khai phá luật kết hợp)** để tìm ra các mẫu hành vi ẩn (hidden patterns) quyết định hiệu suất học tập.
+   - Các bước thực hiện:
+       + Bước 1. Filtering Data
+           + Lọc bộ dữ liệu chỉ lấy những trường hợp passed_exam == 'Passed' để lấy ra tập hợp những sinh viên đã vượt qua bài kiểm tra.
+       + Bước 2. Data discretization(Rời rạc hóa số liệu)
+           + Vì thuật toán FP-Growth yêu cầu dữ liệu đầu vào dạng định danh(categorical).Vì vậy,sử dụng kĩ thuật binning theo phân vị. Nhóm dữ liệu dưới ngưỡng phân vị(< 50%) sẽ được đánh nhãn là 'Low' và ngược lại sẽ được gánh nhãn là 'High'
+           + Điều này giúp chuẩn hóa các thang đo khác nhau trong dữ liệu về cùng 1 hệ quy chiếu.
+       + Bước 3. Áp dụng thuật toán FP-Growth.
+           + Áp dụng One-Hot Encoding để chuyển dữ liệu sang dạng Boolean.
+           + Sử dụng min_support = 0.1 và min_confidence để loại đi những luật không phổ biến.
+           + Support: Độ phổ biến của luật trên toàn bộ bản ghi. Support(A->B) = Số lần xuất hiện của A và B / Tổng số bản ghi.
+           + Confident: Xác suất xảy ra B khi A đã xảy ra được sử dụng để đánh giá độ tin cậy của luật này. Confident(A->B) = Số lần xuất hiện của A và B / Số lần xuất hiện của A. Ví dụ: Confidence(A->B) = 75%: Trong 100 sinh viên có A thì 75% đó sẽ có thêm cả B. 
+           + Lift: Đánh giá mức độ phụ thuộc giữa A và B.
+                +   Lift(A->B) = Confidence(A->B) / Support(B).
+                +   Lift > 1: Luật này là hữu ích khi nếu đã xuất hiện A sẽ làm tăng sự xuất hiện của B.
+                +   Lift = 1: A và B là 2 thành phần độc lập và không liên quan tới nhau.
+                +   Lift < 1: nếu đã xuất hiện A thì làm giảm sự xuất hiện của B.
+        + Bước 4. Đánh giá kết quả.
+           + Công thức thành công:
+                + Hour_high + Project_high => final_exam_high.
+                + Luật này chiếm 10% trong bộ dữ liệu và có độ tin cậy 75%.
+                + Như vậy việc học tập theo phương pháp(Project-Based Learning) kết hợp với sự đảm bảo về thời gian học là yếu tố quan trọng nhất dẫn đến sự thành công vượt qua khóa học.
+           + Vai trò của thực hành:
+                + Tiếp theo việc học từ Project thì việc thực hành debug cũng như làm bài tập là những phương pháp mạnh mẽ tiếp theo
+           + Cảnh báo về việc học thụ động:
+                + Từ bộ dữ liệu, ta nhận thấy rằng việc xem video tutorials không thể đảm bảo việc dành được kết quả cao.
+   - Khuyến nghị: 
+      - Dành cho giáo viên:
+           + Tái cấu trúc trọng số điểm: Nâng trọng số điểm của Project ép buộc sinh viên phải đầu tư thời gian vào việc làm Project nếu muốn đạt điểm cao.
+           + Thiết kế bài giảng: Giảm số lượng video tutorial thay vào đó là những buổi thực hành cũng như debug.
+            
 
