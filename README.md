@@ -1,7 +1,8 @@
 # DA_PythonExamInKaggle
 🎓 **Student Performance Enhancement System**
 Hệ Thống Tối Ưu & Dự Báo Hiệu Suất Sinh Viên Python
-📖 Tổng quan dự án (Project Overview)
+
+**📖 Tổng quan dự án (Project Overview)**
 Trong bối cảnh giáo dục trực tuyến, việc theo dõi sát sao 3,000 sinh viên là bất khả thi đối với giảng viên. Tỷ lệ trượt môn (Exam Failure) cao không chỉ ảnh hưởng đến uy tín khóa học mà còn lãng phí tài nguyên đào tạo.
 
 Dự án **Student Performance Enhancement System** được xây dựng nhằm cung cấp cho Ban Quản lý Đào tạo (Course Managers) những thông tin chi tiết dựa trên dữ liệu (data-driven insights). Hệ thống không chỉ dừng lại ở báo cáo mô tả mà còn tích hợp các mô hình Machine Learning để dự báo rủi ro và gợi ý lộ trình học tập cá nhân hóa.
@@ -182,5 +183,79 @@ Công nghệ sử dụng
       - Dành cho giáo viên:
            + Tái cấu trúc trọng số điểm: Nâng trọng số điểm của Project ép buộc sinh viên phải đầu tư thời gian vào việc làm Project nếu muốn đạt điểm cao.
            + Thiết kế bài giảng: Giảm số lượng video tutorial thay vào đó là những buổi thực hành cũng như debug.
-            
+
+**📊 I.Python Course Overview**
+<img width="1279" height="716" alt="image" src="https://github.com/user-attachments/assets/59734a7e-7e89-4c25-a998-ca9f19b647c7" />
+
+- Tổng quan:
+  + Tổng số người đã tham gia khóa học là **3000 người**.
+  + Tuy nhiên,tỉ lệ vượt qua khóa học chỉ ở mức **17.73%** và điểm trung bình của toàn khóa học chỉ ở mức **43.32** còn kém xa so với con số để vượt qua khóa học là **60 điểm**.
+  + Biểu đồ Histogram cho chúng ta thấy rằng đa phần sinh viên đang ở mức trung bình, chưa thể vượt qua ngưỡng **60 điểm**. 
+  + Khi nhìn vào biểu đồ Treemap, 1/3 sinh viên đang gặp bế tắc trong khóa học, nhóm này cần thực sự được quan tâm nhiều hơn.
+  + Và khi nhìn vào biểu đồ phễu, có tới 2000 sinh viên đang ở mức dự báo không thể vượt qua được khóa học.
+  => Từ 3 điều trên, chúng ta thấy rằng khóa học đang gặp vấn đề thực sự trong quá trình giảng dạy và không đạt được kết quả cao cũng như đầu ra cũng đang hạn chế. Câu hỏi được đặt ra là:Tại sao họ rớt? Tìm ra chân dung sinh viên để khắc phục vấn đề đang xảy ra.
+- 1 Số thông tin khác:
+  + Khóa học đang được phổ biến rộng rãi trên toàn thế giới khi châu lục nào cũng có người hiện tại đang theo học khóa học.
+  + Những người đã có kinh nghiệm lập trình từ trước khi tham gia khóa học là lợi thế lớn khi điểm trung bình của những người này đang ở ngưỡng vượt qua khóa học.
+  + Những sinh viên, người có khả năng tiếp thu kiến thức và học tập nhanh đang đạt hiệu quả cao nhất của khóa học, tuy nhiên vẫn chưa bứt phá được so với những nhóm tuổi còn lại.
+ 
+**📊 II.Student Portrait**
+<img width="1262" height="715" alt="image" src="https://github.com/user-attachments/assets/5765541e-a436-4cc4-a9ae-ea6843fa8fc2" />
+
+Sau khi thực thi thuật toán K-Means, Chúng ta đã tìm ra được 3 chân dung khác nhau của sinh viên: Deadlock(Những người đang gặp bế tắc), Passed(Những người đã vượt qua khóa học, lấy mốc làm chuẩn để so sánh, đặt mục tiêu cho những nhóm còn lại), Potential Passed(Những người có khả năng vượt qua khóa học khi sắp tiệm cận với những người passed),Suspect(Những người thuộc diện nhóm nghi ngờ khi không dành nhiều thời gian học tập nhưng lại đạt kết quả cao).
+1. Programming Background Distribution:
+   + Những người ở nhóm Deadlock và Suspect là những sinh viên chưa có kinh nghiệm lập trình trước đó.
+   + Ngược lại thì ở nhóm passed đều là những người đã có kinh nghiệp lập trình từ trước.
+2. Learning Behavior Profile:
+   +  Deadlock:
+       + ⚠️ ĐẶC ĐIỂM NHẬN DẠNG: 'HỌC NHIỀU - HIỂU ÍT'
+       + Hành vi: Đây là nhóm 'mọt sách' điển hình nhưng sai phương pháp. Dữ liệu cho thấy họ xem tới **42.51 video (cao nhất lớp)** nhưng chỉ hoàn thành **1.28** dự án.
+       + Kết quả: Mặc dù tốn nhiều thời gian, điểm trung bình chỉ đạt **38.23 điểm**.
+       +  Hành động: Cần 'cai nghiện' Video. Yêu cầu giảng viên giao bài tập bắt buộc để ép họ thực hành.
+   + Suspect:
+       + ❓ ĐẶC ĐIỂM NHẬN DẠNG: 'ẨN SỐ'
+       +  Hành vi: Số liệu cực kỳ bất thường. Thời gian học trên hệ thống gần như bằng 0, nhưng vẫn nộp đủ bài tập và dự án.
+       +  Kết quả: Số lượng bài hoàn thành cũng như số lượng Project đạt ở mức cao. Đây có thể là người đã có kinh nghiệm (Expert) hoặc gian lận.
+       +  Hành động: Cần phỏng vấn trực tiếp để xác thực năng lực.
+   + Potential Passed:
+       +  📈 ĐẶC ĐIỂM NHẬN DẠNG: 'NGƯỜI CẬN ĐÍCH'
+       +  Hành vi: Rất chăm chỉ làm bài tập nhỏ (Practice Problems) nhưng còn rụt rè với các Dự án lớn.
+       +  Kết quả: Các kết quả học tập có hình dạng RadarChart tương đối giống với nhóm Passed. Chỉ cần chăm chỉ hơn một chút nữa thì sẽ có khả năng chuyển sang nhóm Passed.
+       +  Hành động: Hỗ trợ làm thêm những dự án cho nhóm này.
+   + Passed:
+       + 🏆 ĐẶC ĐIỂM NHẬN DẠNG: 'CHIẾN BINH THỰC TẾ'
+       + Hành vi: Nhóm này là hình mẫu lý tưởng. Họ cân bằng hoàn hảo giữa lý thuyết và thực hành. Thực hành tốt sẽ đem lại điểm số cao.
+       + Kết quả: Điểm số ấn tượng. Kết quả cao trong final exam.
+       + Hành động: Khuyến khích họ làm Mentor (người hướng dẫn) cho nhóm Deadlock.
+
+ **📊 III.Success Driver**
+ <img width="1278" height="720" alt="image" src="https://github.com/user-attachments/assets/06b24f65-4bda-4a7e-b1a7-d2efe64028f8" />
+
+ Thực hiện thuật toán FP-Growth, Chúng ta đã tìm được những phương pháp học tốt nhất dẫn đến đạt kết quả cao trong kì thi. 
+1. Sankey Graph: Some learning methods have the most powerful impact on grades.
+    + Việc học thụ động như việc xem Videos và làm những bài tập nhỏ không hề dẫn đến điểm cao trong kì thi, khi không xuất hiện bất cứ luồng nào có input từ việc xem video tutorials nhiều.
+    + Việc dành nhiều thời gian học tập mang lại kết quả cao và cũng phủ sóng lớn trong cộng đồng người đã vượt qua khóa học. Cũng như độ tương quan(lift) dương đang cho thấy sự tích cực và độ confidence cao ở mức 60% cho thấy luật này hoàn toàn có thể tin tưởng được.
+    + Tương tự với dành nhiều thời gian cho việc học, làm nhiều Project cũng phổ biến lên tới 17% và độ tin cậy cao.
+    + Có 1 luồng đáng chú ý, khi việc kết hợp việc xem ít Video Tutorials và chăm làm Project vẫn sẽ đạt kết quả cao. Càng chứng minh rằng việc học thụ động không hề đem lại nhiều kết quả cho điểm thi.
+    + Kết hợp từ 2 yếu tố trên, ta có thể đặt ra kết luận như sau: Chất lượng thực hành (Active Learning) quan trọng hơn số lượng lý thuyết tiêu thụ (Passive Learning).
+    + Gợi ý hành động: Thay đổi trọng số của việc học chủ động(Debug,Project) và giảm đi trọng số của việc học thụ động(Tutorials Video). Thay vì giao bài tập lớn làm từ đầu khóa học tới cuối khóa học. Hãy chia nhỏ Project thành nhiều Milestones giúp theo dõi quá trình làm việc của sinh viên, giúp những sinh viên đang gặp bế tắc một cách hiệu quả hơn.
+
+2. Key Influencer: Một số cách để đạt được trạng thái Passed.
+    + Dành ra việc học từ 7 đến 12h một tuần có thể tăng tỉ lệ passed lên tới 2 lần.
+    + Dành thời gian cho việc làm Project, đặc biệt từ 3 project trở lên sẽ tăng tỉ lệ lên tới 2.55 lần.
+    + Ngoài ra, còn nên tham gia những hoạt động debate trên những Forum hay sử dụng các công cụ như Kaggle cũng khiến tỉ lệ Pass tăng lên đáng kể.
+  
+=> Như vậy sau khi qua Dashboard này, chúng ta có thể kết luận rằng việc học thụ động không thể nào đạt hiệu quả như việc học chủ động.
+
+**📊 IV.Risk Prediction**
+<img width="1279" height="702" alt="image" src="https://github.com/user-attachments/assets/1fcd4bec-3a55-4ea3-b94a-3fc5a05bdfb5" />
+
+ Thực hiện thuật toán RandomForestRegression để có thể dự đoán khả năng đỗ của học sinh từ đó có thể đưa ra hành động trước khi kết quả xảy ra.
+ Tập trung vào các yếu tố chính gây ảnh hưởng đến điểm thi và phân loại học sinh theo tỉ lệ vượt qua khóa học: 
+ + Những học sinh có nguyên nhân chính thiếu Project: Hãy gợi ý học sinh làm thêm Project.
+ + Những học sinh có thể thiếu giờ học: Hãy gợi ý học sinh tăng chất lượng buổi học và dành nhiều thời gian học hơn.
+ + Những học sinh chưa có người hướng dẫn: Hãy gợi ý học sinh có thể chủ động tìm kiếm thông qua Kaggle hoặc những diễn đàn về lập trình.
+ + Những học sinh có nguyên nhân khác: Hãy trao đổi trực tiếp với sinh viên để tìm ra nguyên nhân.
+
+   
 
