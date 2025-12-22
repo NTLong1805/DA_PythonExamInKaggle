@@ -10,7 +10,7 @@ from mlxtend.frequent_patterns import fpgrowth, association_rules
 from pandas.core.common import random_state
 from scipy.signal import square
 from sklearn.cluster import KMeans
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 from sklearn.externals.array_api_compat.numpy.linalg import solve
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, root_mean_squared_error, accuracy_score
 from sklearn.model_selection import train_test_split
@@ -18,6 +18,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
+import shap
+
 
 
 
@@ -108,23 +110,26 @@ for k in K_range:
     wcss.append(kmeans.inertia_)
 kl = KneeLocator(K_range,wcss,curve='convex', direction='decreasing')
 optimal_k = kl.elbow
-# print(f'Số cụm tối ưu:{optimal_k}')
-#
-# # Vẽ biểu đồ trực quan cho thuật toán Elbow
-# plt.plot(K_range,wcss,marker = "o",linestyle="--")
-# plt.xlabel(K_range)
-# plt.ylabel("WCSS")
-# plt.title("Biểu đồ Elbow chọn K tối ưu")
-# for i,txt in enumerate(wcss):
-#     plt.text(K_range[i],wcss[i],f"{round(wcss[i],2)}",fontsize = 9,ha="left",va="bottom")
-# plt.grid(True)
-# plt.show()
+print(f'Số cụm tối ưu:{optimal_k}')
+
+# Vẽ biểu đồ trực quan cho thuật toán Elbow
+plt.plot(K_range,wcss,marker = "o",linestyle="--")
+plt.xlabel(K_range)
+plt.ylabel("WCSS")
+plt.title("Biểu đồ Elbow chọn K tối ưu")
+for i,txt in enumerate(wcss):
+    plt.text(K_range[i],wcss[i],f"{round(wcss[i],2)}",fontsize = 9,ha="left",va="bottom")
+plt.grid(True)
+plt.show()
 
 # THực hiện KMeans
 kmeansFinal = KMeans(3,init='k-means++',random_state=42,n_init = 10)
 kmeansFinal.fit(X)
 cluster_label = kmeansFinal.labels_
 fail_group['Cluster'] = cluster_label
+full_data = data.copy()
+full_data['Cluster'] = 'Passed'
+full_data.loc[fail_group.index,'Cluster'] = cluster_label
 # print(fail_group)
 
 # Đánh giá kết quả KMeans
@@ -204,8 +209,7 @@ print(feature_importance)
 
 
 
-
-#Logistic Regression Classification
+# Logistic Regression Classification
 x_logis = data.drop(['student_id','final_exam_score','passed_exam'],axis = 1)
 target = data['passed_exam'].apply(lambda x: 1 if x == 'Passed' else 0)
 x_logis = pd.get_dummies(x_logis,columns = ['country','prior_programming_experience'],drop_first=True)
@@ -216,19 +220,20 @@ numeric_cols = [
     'projects_completed',
     'tutorial_videos_watched',
     'debugging_sessions_per_week',
-    'final_exam_score'
 ]
 
 for col in numeric_cols:
     x_logis[col] = np.log1p(x_logis[col])
 
 x_scaler = scaler.fit_transform(x_logis)
-x_scaled = pd.DataFrame(x_scaler,columns= x_logis.columns)
+x_scaled = pd.DataFrame(x_scaler,columns= x_logis.columns,index = x_logis.index)
 
 X_train,X_test,y_train,y_test = train_test_split(x_scaled,target,test_size=0.2,random_state=42)
 model = LogisticRegression(solver='liblinear', random_state=42)
 model.fit(X_train, y_train)
 y_pred = model.predict(X_test)
+
+
 print(f"Logistic Regression Accuracy: {accuracy_score(y_test, y_pred):.2%}")
 coef_df = pd.DataFrame({
     'Feature': x_logis.columns,
@@ -253,7 +258,6 @@ comparison = data[['student_id', 'passed_exam', 'Predicted_Status', 'Pass_Probab
 
 print("=== BẢNG KẾT QUẢ DỰ BÁO (TOP 10 SINH VIÊN) ===")
 print(comparison.head(10))
-
 # Thống kê số lượng từng nhóm rủi ro
 print("\n=== THỐNG KÊ NHÓM RỦI RO ===")
 print(data['Risk_Level'].value_counts())
@@ -261,14 +265,22 @@ print(data['Risk_Level'].value_counts())
 
 # Thực hiện FP-Growth => Tìm kiếm các tập phổ biến trong hành vi học tập
 
+cols = [
+    'hours_spent_learning_per_week',
+    'practice_problems_solved',
+    'projects_completed',
+    'tutorial_videos_watched',
+    'debugging_sessions_per_week',
+    'final_exam_score'
+]
 data_fp = data[data.passed_exam == 'Passed'].copy()
 labels = ['Low','High']
 # Chia dữ liệu thành 4 tập theo Quantile(25%,50%,75%)
-for col in numeric_cols:
+for col in cols:
     data_fp[f'{col}_Bin'] = pd.qcut(data_fp[col], q = [0,0.5,1],labels= labels,duplicates='drop')
 
-cols_bin = [f'{col}_Bin' for col in numeric_cols]
-basket = pd.get_dummies(data_fp[cols_bin], prefix=numeric_cols)
+cols_bin = [f'{col}_Bin' for col in cols]
+basket = pd.get_dummies(data_fp[cols_bin], prefix=cols)
 # print(basket)
 
 frequen_items = fpgrowth(basket,0.1,use_colnames=True)
@@ -281,3 +293,16 @@ print(score_rules[['antecedents', 'consequents', 'support', 'confidence', 'lift'
 print(rules.head(20))
 
 
+
+
+output_name = 'datamining_fix_Student.xlsx'
+try:
+    with pd.ExcelWriter(output_name,engine='openpyxl') as writer:
+        score_rules.to_excel(writer, sheet_name='score_rules', index=False)
+        comparison.to_excel(writer, sheet_name='prediction', index=False)
+        coef_df.to_excel(writer,sheet_name = 'Impact',index=False)
+        full_data.to_excel(writer,sheet_name = 'Student',index = False)
+        data.to_excel(writer,sheet_name = 'Origin',index = False)
+        print(f"✅ Thành công! File đã được lưu tại: {output_name}")
+except Exception as e:
+    print(f'Loi xuat file :{e}')
